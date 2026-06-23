@@ -3,16 +3,7 @@ import { loadCampaigns, saveCampaigns, createCampaign } from './store';
 import CampaignForm from './components/CampaignForm';
 import CampaignTable from './components/CampaignTable';
 import StatsBar from './components/StatsBar';
-import WeatherEffect from './components/WeatherEffect';
-import { useWeather } from './hooks/useWeather';
 import './App.css';
-
-const WEATHER_LABELS = {
-  sunny: '☀️ Sunny',
-  rain: '🌧️ Raining',
-  snow: '❄️ Snowing',
-  cloudy: '☁️ Cloudy',
-};
 
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);
@@ -20,7 +11,6 @@ export default function App() {
   const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const { condition, isDay, loading: weatherLoading } = useWeather();
 
   useEffect(() => {
     setCampaigns(loadCampaigns());
@@ -65,28 +55,17 @@ export default function App() {
     return matchStatus && matchSearch;
   });
 
-  const themeClass = `app theme-${isDay ? 'day' : 'night'} weather-${condition}`;
-
   return (
-    <div className={themeClass}>
-      {!weatherLoading && <WeatherEffect condition={condition} />}
-
+    <div className="app">
       <header className="header">
         <div className="header-inner">
           <div className="logo-area">
             <span className="logo-icon">💰</span>
             <h1>UGC Earnings Tracker</h1>
           </div>
-          <div className="header-right">
-            {!weatherLoading && (
-              <span className="weather-badge">
-                {WEATHER_LABELS[condition]} · Vancouver
-              </span>
-            )}
-            <button className="btn-primary" onClick={() => { setEditing(null); setShowForm(true); }}>
-              + Add Campaign
-            </button>
-          </div>
+          <button className="btn-primary" onClick={() => { setEditing(null); setShowForm(true); }}>
+            + Add Campaign
+          </button>
         </div>
       </header>
 
