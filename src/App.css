@@ -1,5 +1,31 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Day / Night themes ── */
+.theme-day {
+  --bg: #f4f4f4;
+  --surface: #ffffff;
+  --surface2: #ebebeb;
+  --border: #d8d8d8;
+  --border-light: #c0c0c0;
+  --text: #0c0c0c;
+  --muted: #888888;
+  --subtle: #cccccc;
+  --accent: #0c0c0c;
+  --accent-hover: #222222;
+}
+.theme-night {
+  --bg: #0c0c0c;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --border: #2a2a2a;
+  --border-light: #333333;
+  --text: #f4f4f4;
+  --muted: #6b6b6b;
+  --subtle: #3a3a3a;
+  --accent: #f4f4f4;
+  --accent-hover: #ffffff;
+}
+
 :root {
   --bg: #0c0c0c;
   --surface: #111111;
@@ -315,3 +341,109 @@ textarea { resize: vertical; }
   .main { padding: 16px; }
   .header { padding: 0 16px; }
 }
+
+/* ── Header right ── */
+.header-right { display: flex; align-items: center; gap: 16px; }
+.weather-badge {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Weather layer ── */
+.weather-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.app > .weather-layer { z-index: 0; }
+.header, .main { position: relative; z-index: 1; }
+
+/* ── Rain ── */
+.raindrop {
+  position: absolute;
+  top: -20px;
+  width: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, transparent, rgba(147,197,253,0.6));
+  animation: rain-fall linear infinite;
+}
+@keyframes rain-fall {
+  0%   { transform: translateY(-20px) skewX(-10deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(105vh) skewX(-10deg); opacity: 0; }
+}
+
+/* Day rain is slightly darker */
+.theme-day .raindrop {
+  background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.35));
+}
+
+/* ── Snow ── */
+.snowflake {
+  position: absolute;
+  top: -16px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  animation: snow-fall linear infinite;
+}
+.theme-day .snowflake { background: rgba(200,220,255,0.9); }
+@keyframes snow-fall {
+  0%   { transform: translateY(-16px) translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateY(50vh) translateX(var(--drift, 30px)); }
+  90%  { opacity: 1; }
+  100% { transform: translateY(105vh) translateX(0); opacity: 0; }
+}
+
+/* ── Sun ── */
+.sun-layer { display: flex; align-items: flex-start; justify-content: flex-end; padding: 48px; }
+.sun {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sun-pulse 6s ease-in-out infinite;
+}
+@keyframes sun-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+.sun-core {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde68a, #f59e0b);
+  box-shadow: 0 0 30px rgba(251,191,36,0.5), 0 0 60px rgba(251,191,36,0.2);
+  animation: core-glow 3s ease-in-out infinite;
+}
+.theme-night .sun-core {
+  background: radial-gradient(circle, #fef3c7, #fbbf24);
+  box-shadow: 0 0 24px rgba(251,191,36,0.35), 0 0 50px rgba(251,191,36,0.12);
+}
+@keyframes core-glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(251,191,36,0.5), 0 0 60px rgba(251,191,36,0.2); }
+  50%       { box-shadow: 0 0 40px rgba(251,191,36,0.7), 0 0 80px rgba(251,191,36,0.3); }
+}
+.sun-ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 18px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: linear-gradient(to top, rgba(251,191,36,0.8), transparent);
+  transform-origin: 50% 38px;
+  animation: ray-spin 12s linear infinite;
+}
+@keyframes ray-spin { to { transform: rotate(360deg); } }
+
+/* Slow spin for all rays together */
+.sun { animation: sun-pulse 6s ease-in-out infinite, sun-rotate 20s linear infinite; }
+@keyframes sun-rotate { to { transform: rotate(360deg); } }
